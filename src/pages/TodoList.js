@@ -1,11 +1,11 @@
 import './TodoList.css';
 import { useState } from "react";
-import { Input } from "../components/input";
+import { Input } from "../components/Input";
 import { Button } from "../components/button";
 
 export const TodoList = () => {
-  const [inputValue, setInputValue] = useState("");
-  // const [todoList, setTodoList] = useState([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [todoList, setTodoList] = useState(
     [
       {
@@ -16,19 +16,32 @@ export const TodoList = () => {
         title:"米を炊く",
         description:"18:30 くらいに炊きあがるように設定しておく。",
       },
-      {
-        title:"ゴミを捨てる",
-        description:"明日の８時までに燃えるゴミを出しておく。",
-      },
-    ]);
+    ]
+  );
+
+  const changeTitle = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const changeDescription = (e) => {
+    setDescription(e.target.value);
+  };
+
   const addTodoList = () => {
-    console.log(inputValue)
     // const newTodoList = [];
     // for (const todo of todoList) {
     //   newTodoList.push(todo);
     // }
     const newTodoList = [...todoList];
-    newTodoList.push(inputValue);
+    newTodoList.push({title:title, description:description});
+    setTodoList(newTodoList);
+  }
+
+  const deleteTodoList = (todo) => {
+    const newTodoList = [...todoList];
+    const index = newTodoList.findIndex((newTodo) => newTodo.title === todo.title);
+    newTodoList.splice(index, 1);
+    console.warn(todo.title)
     setTodoList(newTodoList);
   }
 
@@ -36,7 +49,8 @@ export const TodoList = () => {
     <>
       <h1>TODO App</h1>
       <div className="input_area">
-        <Input value={inputValue} onChange={(e) => {setInputValue(e.target.value);}}/>
+        <Input title={title} onChange={changeTitle} />
+        <Input description={description} onChange={changeDescription} />
         <Button onClick = {addTodoList}/>
       </div>
 
@@ -46,7 +60,7 @@ export const TodoList = () => {
           {todoList.map(( todo ) => {
             return (
               <div key={todo.title} className="todo_card">
-                <h2 className="todo_title">{todo.title}<img src="img/dust_box.png" alt="削除ボタン" className="delete_button" /></h2>
+                <h2 className="todo_title">{todo.title}<img src="img/dust_box.png" value={todo} alt="削除ボタン" className="delete_button" onClick={()=>deleteTodoList(todo)}/></h2>
                 <p className="todo_content">{todo.description}</p>
               </div>
             )
